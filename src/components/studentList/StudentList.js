@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import SearchBar from '../searchBar/SearchBar';
-import StudentCard from '../studentCard/studentCard';
+import StudentCard from '../studentCard/StudentCard';
 import './StudentList.scss';
 
 
