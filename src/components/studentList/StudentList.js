@@ -1,65 +1,66 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
+
 import SearchBar from '../searchBar/SearchBar';
 import StudentCard from '../studentCard/StudentCard';
+
 import './StudentList.scss';
 
+const StudentList = () => {
 
-const StudentList = ()=> {
-
-   //hooks
+    // hooks
     const [students, setStudents] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
 
-   //functions
-   useEffect(() => {
+    // functions
 
-        const url = 'http://localhost:9000/students';
-        //reach out to the backend
+    useEffect(() => {
+
+        const url = 'https://student-app-backend-june.herokuapp.com/students';
+        // reach out to the backend
         fetch(url)
-        .then(response=>response.json())
-        .then(data=>{
+        .then(response => response.json())
+        .then(data => {
+            console.log(data)
             setStudents(data.students);
         })
-        
-        //get out students
-        //update our students hook with the new data
+        // get our students
+        // update our students hook with the new data
 
-   },[]);//empty array means run on mount
+    }, []); // empty array means run on mount
 
 
-   //when search term is updated, this component will rerender
-   //what to do on a re-render?
-   let filteredStudents = students;
+    // when search term is updated, this component will rerender 
+    // what to do on a re-render? 
+    let filteredStudents = students;
 
-   if(searchTerm){
-        filteredStudents = students.filter(student=>{
+    if(searchTerm){
+        filteredStudents = students.filter(student => {
             const fullName = `${student.firstName} ${student.lastName}`;
-
-            const fullNameToLowercase = fullName.toLowerCase();
+            
+            const fullNameToLowerCase = fullName.toLowerCase();
 
             const searchTermToLowerCase = searchTerm.toLowerCase();
 
-            return fullNameToLowercase.includes(searchTermToLowerCase);
-        })
-   }
+            return fullNameToLowerCase.includes(searchTermToLowerCase);
+        });
+    }
 
 
-   //return or JSX
-
-   return(
-       <div className="studentList">
-           <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-           {filteredStudents.map(student=>{
-               return (
-                   <div>
-
-                       <StudentCard student={student}/>
-                    </div>
-               )
+    // return or JSX
+    return (
+        <div className="studentList">
+          <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+           {filteredStudents.map((student) => {
+            return (
+                <StudentCard student={student} key={student.id} />
+            )
            })}
-           {filteredStudents.length ===0 && <div className="studentList__noResults">No Results</div>}
-       </div>
-   )
+
+           {filteredStudents.length === 0 && <div className="studentList__noResults">No Results </div>}
+        </div>
+    )
+
+
 }
 
 export default StudentList;

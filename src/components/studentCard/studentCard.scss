@@ -6,23 +6,24 @@
     display: flex;
     padding: 10px;
     border-bottom: 2px solid $background-gray;
+    
 
+    &__profilePic { 
 
-    &__profilePic{
         margin: 8px;
 
-        img{
+        img {
             width: 100px;
             height: 100px;
             border: 2px solid $background-gray;
             border-radius: 50%;
-        } 
+        }
     }
 
-     &__info {
-         margin-left: 20px;
-         width: 70%;
-     }
+    &__info {
+        margin-left: 20px;
+        width: 70%;
+    }
 
      &__name{
          font-size: 30px;
@@ -38,18 +39,19 @@
      }
 
      &__gradesList{
-         margin-top:10px;
-         @extend %gray-and-indented;
+        @extend %gray-and-indented;
+        margin-top: 10px;
          span{
-             min-width: 50px;
+             min-width: 60px;
              display: inline-block;
          }
          display: none;
      }
 
      &__toggleIcons {
-         color: $highlight-grey;
+         color: $shadow-gray;
          padding-top: 8px;
+         
      }
 
      &__toggleIcon{

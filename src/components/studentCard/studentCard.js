@@ -12,6 +12,8 @@ const StudentCard = ({student})=> {
     //hooks
     const [showGrades, setShowGrades] = useState(false);
 
+    console.log(showGrades);
+
     //functions
 
     const calculateAverage =(grades) => {
@@ -19,17 +21,16 @@ const StudentCard = ({student})=> {
         grades.map(grade=>{
             return sum += Number(grade);
         })
-        // return grades.reduce((sum, val) => sum + Number(val), 0)/grades.length;
         return sum/grades.length;
     }
 
     return (
         <div className="studentCard">
             <div className="studentCard__profilePic">
-                <img src={pic} />
+                <img src={pic} alt="student"/>
             </div>
 
-            <div className="studentCard_info">
+            <div className="studentCard__info">
                 <div className="studentCard__name">
                     {`${firstName} ${lastName}`}
                 </div>
@@ -45,19 +46,20 @@ const StudentCard = ({student})=> {
                 <div className="studentCard__infoLine">
                     Average:{calculateAverage(grades)}%
                 </div> 
-                <div className="studentCard__gradesList" style={{"display": showGrades ? "block" : "none"}}>
-                    {grades.map((grade, index) => {
-                        return (
-                            <div key={index}><span>Test {index+1}:</span><span>{grade}%</span></div>
-                        )
-                    })}   
-                </div>
+               <div className="studentCard__gradesList" style = {{"display": showGrades? "block": "none"}}>
+                   {grades.map((grade, index)=>{
+                       return (
+                        <div><span>Test {index+1}:</span><span>{grade}%</span></div>
+                       )
+                   })}
+                   
+               </div>
             </div>
             <div className="studentCard__toggleIcons">
-
-                    {!showGrades && <FaPlus className="studentCard__toggleIcon" onClick={() => setShowGrades(false)} size="1.8em"/>}
-                    {showGrades && <FaMinus className="studentCard__toggleIcon" onClick={() => setShowGrades(true)} size="1.8em" />}
+                {!showGrades && <FaPlus className="studentCard__toggleIcon" onClick = {()=> setShowGrades(true)} size="1.8em"/>}
+                {showGrades && <FaMinus className="studentCard__toggleIcon" onClick = {()=> setShowGrades(false)} size="1.8em"/>}
             </div>
+            
         </div>
     );
 }
