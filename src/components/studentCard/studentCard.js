@@ -1,4 +1,5 @@
 import  {React, useState} from 'react';
+import { Link } from 'react-router-dom';
 
 import { FaPlus, FaMinus } from 'react-icons/fa';
 
@@ -12,8 +13,6 @@ const StudentCard = ({student})=> {
     //hooks
     const [showGrades, setShowGrades] = useState(false);
 
-    // console.log(showGrades);
-
     //functions
 
     const calculateAverage =(grades) => {
@@ -24,8 +23,15 @@ const StudentCard = ({student})=> {
         return sum/grades.length;
     }
 
+    const toggleGrades = (e) => {
+        e.stopPropagation();
+        e.preventDefault()
+        setShowGrades(!showGrades);
+    }
+
     return (
         <div className="studentCard">
+            <Link to={`/students/${student.id}`} state={{student: student}}>
             <div className="studentCard__profilePic">
                 <img src={pic} alt="student"/>
             </div>
@@ -56,10 +62,10 @@ const StudentCard = ({student})=> {
                </div>
             </div>
             <div className="studentCard__toggleIcons">
-                {!showGrades && <FaPlus className="studentCard__toggleIcon" onClick = {()=> setShowGrades(true)} size="1.8em"/>}
-                {showGrades && <FaMinus className="studentCard__toggleIcon" onClick = {()=> setShowGrades(false)} size="1.8em"/>}
+                {!showGrades && <FaPlus className="studentCard__toggleIcon" onClick = {(e)=> toggleGrades(e)} size="1.8em"/>}
+                {showGrades && <FaMinus className="studentCard__toggleIcon" onClick = {(e)=> toggleGrades(e)} size="1.8em"/>}
             </div>
-            
+            </Link>
         </div>
     );
 }

@@ -3,9 +3,16 @@
 
 .studentCard {
 
-    display: flex;
+    
     padding: 10px;
     border-bottom: 2px solid $background-gray;
+    background-color: white;
+
+    a{
+        text-decoration: none;
+        display: flex;
+        color: unset;
+    }
     
 
     &__profilePic { 
