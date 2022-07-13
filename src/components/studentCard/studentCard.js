@@ -1,73 +1,92 @@
-import  {React, useState} from 'react';
-import { Link } from 'react-router-dom';
+import React, {useState} from 'react';
+import { Link } from "react-router-dom";
+
+import SingleTextInput from '../singleTextInput/SingleTextInput';
 
 import { FaPlus, FaMinus } from 'react-icons/fa';
 
 import './StudentCard.scss';
 
-const StudentCard = ({student})=> {
+const StudentCard = ({student}) => {
 
-    //props decinstructed
+    // props deconstructed
     const {pic, firstName, lastName, email, company, skill, grades} = student;
 
-    //hooks
+    // hooks
     const [showGrades, setShowGrades] = useState(false);
+    const [tags, setTags] = useState([]);
+    const [tag, setTag] = useState("");
 
-    //functions
+    // functions 
+    const calculateAverage = (grades) => {
 
-    const calculateAverage =(grades) => {
         let sum = 0;
-        grades.map(grade=>{
+
+        grades.map(grade => {
             return sum += Number(grade);
-        })
-        return sum/grades.length;
+        });
+
+        return sum / grades.length;
     }
 
     const toggleGrades = (e) => {
         e.stopPropagation();
-        e.preventDefault()
+        e.preventDefault();
         setShowGrades(!showGrades);
     }
 
+
+
     return (
         <div className="studentCard">
-            <Link to={`/students/${student.id}`} state={{student: student}}>
+            <Link to={`/students/${student.id}`} state={{ student: student }}>
             <div className="studentCard__profilePic">
-                <img src={pic} alt="student"/>
+                <img src={pic} />
             </div>
-
+            
             <div className="studentCard__info">
                 <div className="studentCard__name">
-                    {`${firstName} ${lastName}`}
+                    {`${firstName}  ${lastName}`}
                 </div>
                 <div className="studentCard__infoLine">
-                    Email{email}
+                    Email: {email}
                 </div>
                 <div className="studentCard__infoLine">
-                    Company:{company}
+                    Company: {company}
                 </div>
                 <div className="studentCard__infoLine">
-                    Skill:{skill}
+                    Skill: {skill}
                 </div>
                 <div className="studentCard__infoLine">
-                    Average:{calculateAverage(grades)}%
-                </div> 
-               <div className="studentCard__gradesList" style = {{"display": showGrades? "block": "none"}}>
-                   {grades.map((grade, index)=>{
-                       return (
-                        <div key={index}><span>Test {index+1}:</span><span>{grade}%</span></div>
-                       )
-                   })}
-                   
-               </div>
+                    Average: {calculateAverage(grades)}%
+                </div>
+                <div className="studentCard__gradesList" style={{"display": showGrades ? "block" : "none"}}>
+                    {grades.map((grade, index) => {
+                        return (
+                            <div key={index}><span>Test {index+1}:</span><span>{grade}%</span></div>
+                        )
+                    })}
+                </div>
             </div>
             <div className="studentCard__toggleIcons">
-                {!showGrades && <FaPlus className="studentCard__toggleIcon" onClick = {(e)=> toggleGrades(e)} size="1.8em"/>}
-                {showGrades && <FaMinus className="studentCard__toggleIcon" onClick = {(e)=> toggleGrades(e)} size="1.8em"/>}
+                {!showGrades && <FaPlus className="studentCard__toggleIcon" onClick={(e) => toggleGrades(e)} size="1.8em"/>}
+                {showGrades && <FaMinus className="studentCard__toggleIcon" onClick={(e) => toggleGrades(e)} size="1.8em" />}
             </div>
             </Link>
+            <div className="studentCard__tagCollection">
+                    {tags.map((tag, index)=>{
+                        return(
+                            <span className="studentCard__tag" key={tag + index}>{tag}</span>
+                        )
+                    })}
+                    <div className="studentCard__tags">    
+                    </div>
+                    <div className="studentCard__tagInput">
+                        <SingleTextInput onSubmit = {setTags} collection = {tags} searchTerm={tag} setSearchTerm ={setTag} width="26%" placeholder="Add a tag" />
+                    </div>
+                </div>
         </div>
-    );
+    )
 }
 
 export default StudentCard;

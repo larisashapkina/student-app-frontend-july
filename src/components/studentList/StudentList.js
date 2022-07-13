@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 
-import SearchBar from '../searchBar/SearchBar';
+import SingleTextInput from '../singleTextInput/SingleTextInput';
 import StudentCard from '../studentCard/StudentCard';
 
 import './StudentList.scss';
@@ -15,7 +15,7 @@ const StudentList = () => {
 
     useEffect(() => {
 
-        const url = 'https://student-app-backend-june.herokuapp.com/students';
+        const url = 'https://student-app-be-june.herokuapp.com/students';
         // reach out to the backend
         fetch(url)
         .then(response => response.json())
@@ -49,14 +49,15 @@ const StudentList = () => {
     // return or JSX
     return (
         <div className="studentList">
-          <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+          <SingleTextInput searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
            {filteredStudents.map((student) => {
             return (
                 <StudentCard student={student} key={student.id} />
+                
             )
            })}
 
-           {filteredStudents.length === 0 && <div className="studentList__noResults">No Results </div>}
+           {filteredStudents.length == 0 && <div className="studentList__noResults">No Results </div>}
         </div>
     )
 
