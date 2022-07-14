@@ -20,8 +20,7 @@ const StudentList = () => {
         fetch(url)
         .then(response => response.json())
         .then(data => {
-            console.log(data)
-            setStudents(data.students);
+            setStudents(data);
         })
         // get our students
         // update our students hook with the new data
