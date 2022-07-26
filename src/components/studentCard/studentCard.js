@@ -3,8 +3,9 @@ import { Link } from "react-router-dom";
 
 import SingleTextInput from '../singleTextInput/SingleTextInput';
 import EmptyView from '../emptyView/EmptyView';
+import DialogBox from '../dialogBox/DialogueBox';
 
-import { FaPlus, FaMinus} from 'react-icons/fa';
+import { FaPlus, FaMinus, FaTrash} from 'react-icons/fa';
 import { AiOutlineReload } from 'react-icons/ai';
 
 import './StudentCard.scss';
@@ -20,16 +21,14 @@ const StudentCard = ({student}) => {
     const[gradesLoading, setGradesLoading] = useState(false);
     const [tags, setTags] = useState([]);
     const [tag, setTag] = useState("");
+    const[showDeleteDialog, setShowDeleteDialog] = useState(false);
 
     // functions 
     const calculateAverage = (grades) => {
-
         let sum = 0;
-
         grades.map(grade => {
             return sum += Number(grade.grade);
         });
-
         return sum / grades.length;
     }
 
@@ -60,6 +59,23 @@ const StudentCard = ({student}) => {
         }
     }
 
+    const showDeleteUserDialogue= (e)=>{
+        setShowDeleteDialog(true);
+    }
+
+    const deleteUser = () =>{
+        const url = `https://student-app-backend-june.herokuapp.com/students/${id}`;
+
+        fetch(url, {method: 'DELETE'})
+            .then(response =>response.json())
+            .then(data=>{
+                //redirect to home page
+                //show toast that user was deleted
+            })
+            .cathc(err=>{
+
+            })
+    }
     // useEffect(()=>{
     //     if(grades.length)
     //         setShowGrades(!showGrades); 
@@ -101,12 +117,13 @@ const StudentCard = ({student}) => {
                 {grades.length === 0 && <EmptyView text="No Grades for this student"/>}
                 </div>
             </div>
-            <div className="studentCard__toggleIcons">
-                {gradesLoading && < AiOutlineReload className="studentCard__toggleIcon-spinning" size="1.8em" />}
-                {(!showGrades && !gradesLoading) && <FaPlus className="studentCard__toggleIcon" onClick={(e) => fetchAndShowGrades(e)} size="1.8em"/>}
-                {(showGrades && !gradesLoading) && <FaMinus className="studentCard__toggleIcon" onClick={(e) => hideGrades(e)} size="1.8em" />}
-            </div>
+            <div className="studentCard__actionIcons">
+                    {gradesLoading && < AiOutlineReload className="studentCard__toggleIcon-spinning" size="1.8em" />}
+                    {(!showGrades && !gradesLoading) && <FaPlus className="studentCard__toggleIcon" onClick={(e) => fetchAndShowGrades(e)} size="1.8em"/>}
+                    {(showGrades && !gradesLoading) && <FaMinus className="studentCard__toggleIcon" onClick={(e) => hideGrades(e)} size="1.8em" />}
+            </div>      
             </Link>
+            <div className="studentCard__tagCollectionRow">
             <div className="studentCard__tagCollection">
                     {tags.map((tag, index)=>{
                         return(
@@ -119,7 +136,13 @@ const StudentCard = ({student}) => {
                         <SingleTextInput onSubmit = {setTags} collection = {tags} searchTerm={tag} setSearchTerm ={setTag} width="26%" placeholder="Add a tag" />
                     </div>
                 </div>
-        </div>
+                <div>
+                {gradesLoading && < AiOutlineReload className="studentCard__toggleIcon-spinning" size="1.8em" />}
+                    {(!showGrades && !gradesLoading) && <FaTrash className="studentCard__trashIcon" onClick={(e) => showDeleteUserDialogue(e)} size="1.8em"/>}
+                </div>
+                </div>
+                <DialogBox open={showDeleteDialog} setOpen={setShowDeleteDialog} deleteUser={deleteUser}/>
+            </div>
     )
 }
 

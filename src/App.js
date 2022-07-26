@@ -10,10 +10,12 @@ function App() {
     <div className="App">
         <BrowserRouter>
         <NavBar/>
+        <div className="pageContainer">
             <Routes>  
                 <Route path="/" element={<StudentList />}/>   
                 <Route path ="/students/:studentId" element = {<StudentDetailPage/>} />
             </Routes>
+        </div>   
         </BrowserRouter>
     </div>
   );
