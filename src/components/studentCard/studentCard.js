@@ -1,148 +1,187 @@
 import React, {useState, useEffect} from 'react';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import SingleTextInput from '../singleTextInput/SingleTextInput';
 import EmptyView from '../emptyView/EmptyView';
-import DialogBox from '../dialogBox/DialogueBox';
+import DialogBox from '../dialogBox/DialogBox';
 
-import { FaPlus, FaMinus, FaTrash} from 'react-icons/fa';
-import { AiOutlineReload } from 'react-icons/ai';
+import Alert from '@mui/material/Alert';
+import Snackbar from '@mui/material/Snackbar';
+
+import { FaPlus, FaMinus, FaTrash } from 'react-icons/fa';
+import {AiOutlineReload } from 'react-icons/ai';
 
 import './StudentCard.scss';
 
-const StudentCard = ({student}) => {
+const StudentCard = ({student, showDelete=false}) => {
+
+    let navigate = useNavigate();
 
     // props deconstructed
     const {id, pic, firstname, lastname, email, company, skill} = student;
 
     // hooks
-    const [grades, setGrades ] = useState([]);
+    const [grades, setGrades] = useState([]);
     const [showGrades, setShowGrades] = useState(false);
-    const[gradesLoading, setGradesLoading] = useState(false);
+    const [gradesLoading, setGradesLoading] = useState(false);
     const [tags, setTags] = useState([]);
-    const [tag, setTag] = useState("");
-    const[showDeleteDialog, setShowDeleteDialog] = useState(false);
+    const [tag, setTag] = useState('');
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+    const [deleteUserLoading, setDeleteUserLoading] = useState(false);
+    const [showSnackbar, setShowSnackbar] = useState(false);
 
     // functions 
     const calculateAverage = (grades) => {
+
         let sum = 0;
+
         grades.map(grade => {
-            return sum += Number(grade.grade);
+            sum += Number(grade.grade);
         });
+
         return sum / grades.length;
     }
 
-    const hideGrades = (e) =>{
+    const hideGrades = (e) => {
         e.stopPropagation();
         e.preventDefault();
+
         setShowGrades(false);
     }
+
     const fetchAndShowGrades = (e) => {
         e.stopPropagation();
         e.preventDefault();
+        
+
+        // do we already have the grades? 
         if(grades.length > 0){
             setShowGrades(true);
-        }else{
+        } else {
 
             setGradesLoading(true);
 
-            const url = `http://localhost:9000/students/${id}/grades`;
+            const url = `https://student-app-be-june.herokuapp.com/students/${id}/grades`;
 
             fetch(url)
-            .then(response =>response.json())
-            .then(data =>{
-                
+            .then(response => response.json())
+            .then(data => {
+
                 setGrades(data);
                 setShowGrades(true);
                 setGradesLoading(false);
             })
         }
+
     }
 
-    const showDeleteUserDialogue= (e)=>{
+    const showDeleteUserDialogue = (e) => {
         setShowDeleteDialog(true);
     }
 
-    const deleteUser = () =>{
-        const url = `https://student-app-backend-june.herokuapp.com/students/${id}`;
+    const deleteUser = () => {
 
-        fetch(url, {method: 'DELETE'})
-            .then(response =>response.json())
-            .then(data=>{
-                //redirect to home page
-                //show toast that user was deleted
-            })
-            .cathc(err=>{
+        setDeleteUserLoading(true);
+        // url to delete 
+        const url = `https://student-app-be-june.herokuapp.com/students/${id}`;
 
+        fetch(url, { method: 'DELETE' })
+            .then(response =>  response.json())
+            .then(data => {
+                // redirect to home page
+                navigate("/", { 
+                    state: {
+                        studentName: `${data.firstname} ${data.lastname}`
+                    }
+                });
+
+                setDeleteUserLoading(false)
+            }).catch(err => {
+                // show toast that delete was unsuccessful
+                setDeleteUserLoading(false)
+                setShowSnackbar(true);
             })
+
     }
-    // useEffect(()=>{
+
+    // useEffect(() => {
     //     if(grades.length)
-    //         setShowGrades(!showGrades); 
-    // },[grades]);
+    //         setShowGrades(!showGrades);
+    // }, [grades])
 
     return (
         <div className="studentCard">
+            <Snackbar 
+                open={showSnackbar} 
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                autoHideDuration={1500}
+                onClose={() => setShowSnackbar(false)}>
+                <Alert severity="error">An error occurred while deleting — try again later.</Alert>
+            </Snackbar>
+
             <Link to={`/students/${id}`} state={{ student: student }}>
-            <div className="studentCard__profilePic">
-                <img src={pic} />
-            </div>
             
-            <div className="studentCard__info">
-                <div className="studentCard__name">
-                    {`${firstname}  ${lastname}`}
+                <div className="studentCard__profilePic">
+                    <img src={pic} />
                 </div>
-                <div className="studentCard__infoLine">
-                    Email: {email}
-                </div>
-                <div className="studentCard__infoLine">
-                    Company: {company}
-                </div>
-                <div className="studentCard__infoLine">
-                    Skill: {skill}
-                </div>
-                <div className="studentCard__gradesList" style={{"display": showGrades ? "block" : "none"}}>
-                 {grades.length > 0 &&  
-                 <>
-                    <div className="studentCard__gradeAverage">
-                        Average: {grades.length && calculateAverage(grades)}%
+            
+                <div className="studentCard__info">
+                    <div className="studentCard__name">
+                        {`${firstname}  ${lastname}`}
                     </div>
-                    {grades.map((grade, index) => {
-                        return (
-                            <div key={index}><span>Test {index+1}:</span><span>{grade.grade}%</span></div>
-                        )
-                    })}
-                </>
-                }
-                {grades.length === 0 && <EmptyView text="No Grades for this student"/>}
+                    <div className="studentCard__infoLine">
+                        Email: {email}
+                    </div>
+                    <div className="studentCard__infoLine">
+                        Company: {company}
+                    </div>
+                    <div className="studentCard__infoLine">
+                        Skill: {skill}
+                    </div>
+
+                    <div className="studentCard__gradesList" style={{"display": showGrades ? "block" : "none"}}>
+                        {grades.length > 0 &&
+                        <>
+                            <div className="studentCard__gradeAverage">
+                                Average: {grades.length && calculateAverage(grades)}%
+                            </div>
+                            {grades.map((grade, index) => {
+                                return (
+                                    <div key={index}><span>Test {index+1}:</span><span>{grade.grade}%</span></div>
+                                )
+                            })}
+                        </>
+                        }
+                        {grades.length === 0  && <EmptyView text="No Grades for this Student"/>}
+                    </div>
                 </div>
-            </div>
-            <div className="studentCard__actionIcons">
-                    {gradesLoading && < AiOutlineReload className="studentCard__toggleIcon-spinning" size="1.8em" />}
+                <div className="studentCard__actionIcons">
+                    {gradesLoading && <AiOutlineReload className="studentCard__toggleIcon-spinning" size="1.8em" />}
                     {(!showGrades && !gradesLoading) && <FaPlus className="studentCard__toggleIcon" onClick={(e) => fetchAndShowGrades(e)} size="1.8em"/>}
                     {(showGrades && !gradesLoading) && <FaMinus className="studentCard__toggleIcon" onClick={(e) => hideGrades(e)} size="1.8em" />}
-            </div>      
-            </Link>
+                </div>
+    
+            </Link> 
             <div className="studentCard__tagCollectionRow">
-            <div className="studentCard__tagCollection">
-                    {tags.map((tag, index)=>{
-                        return(
-                            <span className="studentCard__tag" key={tag + index}>{tag}</span>
-                        )
-                    })}
-                    <div className="studentCard__tags">    
+                <div className="studentCard__tagCollection">
+                    <div className="studentCard__tags">
+                        {tags.map((tag, index) => {
+                            return (
+                                <span className="studentCard__tag" key={tag + index}>{tag}</span>
+                            )
+                        })}
                     </div>
                     <div className="studentCard__tagInput">
-                        <SingleTextInput onSubmit = {setTags} collection = {tags} searchTerm={tag} setSearchTerm ={setTag} width="26%" placeholder="Add a tag" />
+                        <SingleTextInput onSubmit={setTags} collection={tags} searchTerm={tag} setSearchTerm={setTag} width="26%" placeholder="Add a tag" />
                     </div>
                 </div>
-                <div>
-                {gradesLoading && < AiOutlineReload className="studentCard__toggleIcon-spinning" size="1.8em" />}
-                    {(!showGrades && !gradesLoading) && <FaTrash className="studentCard__trashIcon" onClick={(e) => showDeleteUserDialogue(e)} size="1.8em"/>}
-                </div>
-                </div>
-                <DialogBox open={showDeleteDialog} setOpen={setShowDeleteDialog} deleteUser={deleteUser}/>
+                {showDelete && <div>
+                    {deleteUserLoading && <AiOutlineReload className="studentCard__toggleIcon-spinning" size="1.8em" />}
+                    {(!showGrades && !deleteUserLoading) && <FaTrash className="studentCard__trashIcon" onClick={(e) => showDeleteUserDialogue(e)} size="1.8em"/>}
+                </div> }
             </div>
+            <DialogBox open={showDeleteDialog} setOpen={setShowDeleteDialog} deleteUser={deleteUser} />
+        </div>
     )
 }
 

@@ -1,25 +1,38 @@
 import React, {useEffect, useState} from 'react';
+import { useLocation } from "react-router-dom";
+
+
 
 import SingleTextInput from '../singleTextInput/SingleTextInput';
 import StudentCard from '../studentCard/StudentCard';
 import EmptyView from '../emptyView/EmptyView';
 
+import Alert from '@mui/material/Alert';
+import Snackbar from '@mui/material/Snackbar';
+
 import './StudentList.scss';
 
-const StudentList = () => {
+const StudentList = (props) => {
+
+    let location = useLocation();
 
     
-
     // hooks
     const [students, setStudents] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [loading, setLoading] = useState(false);
-
+    const [showSnackbar, setShowSnackbar] = useState(false);
+    
+    
     // functions
 
     useEffect(() => {
 
         setLoading(true);
+
+        if(location?.state?.studentName){
+            setShowSnackbar(true);
+         }
 
         const url = 'https://student-app-be-june.herokuapp.com/students';
         // reach out to the backend
@@ -55,17 +68,23 @@ const StudentList = () => {
     // return or JSX
     return (
         <div className="studentList">
+            <Snackbar 
+                open={showSnackbar} 
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                autoHideDuration={1500}
+                onClose={() => setShowSnackbar(false)}>
+                <Alert>{location?.state?.studentName} was successfully deleted.</Alert>
+            </Snackbar>
           <SingleTextInput searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
            {filteredStudents.map((student) => {
             return (
                 <StudentCard student={student} key={student.id} />
-                
             )
            })}
-
+           
            {loading && <EmptyView center text="Loading..." />}
 
-           {!loading && filteredStudents.length === 0 && <EmptyView center/>}
+           {!loading && filteredStudents.length === 0 && <EmptyView center />}
         </div>
     )
 

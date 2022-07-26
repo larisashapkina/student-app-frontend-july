@@ -7,9 +7,10 @@ import DialogTitle from '@mui/material/DialogTitle';
 const DialogBox = ({open, setOpen, deleteUser}) => {
 
   const handleClose = (e) => {
-    if(e.target.id ==='confirm'){
+    if(e.target.id === 'confirm'){
       deleteUser()
     }
+
     setOpen(false);
   };
 
