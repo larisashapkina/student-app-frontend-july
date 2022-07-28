@@ -17,6 +17,7 @@ const StudentCard = ({student, showDelete=false}) => {
 
     let navigate = useNavigate();
 
+    
     // props deconstructed
     const {id, pic, firstname, lastname, email, company, skill} = student;
 
