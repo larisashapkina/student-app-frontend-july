@@ -9,10 +9,10 @@ function SingleTextInput({searchTerm, setSearchTerm, collection=[], placeholder 
 
     useEffect(()=>{
         const keyDownHandler = event => {
-            if(event.key === 'Enter'){
-                event.preventDefault();
-                handleSubmit();
-            }
+            // if(event.key === 'Enter'){
+            //     event.preventDefault();
+            //     handleSubmit();
+            // }
         };
 
         document.addEventListener('keydown', keyDownHandler);
