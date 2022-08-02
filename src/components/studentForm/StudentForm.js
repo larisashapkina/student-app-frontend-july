@@ -7,9 +7,9 @@ import Snackbar from '@mui/material/Snackbar';
 
 import {AiOutlineReload } from 'react-icons/ai';
 
-import './StudentUpdateForm.scss';
+import './StudentForm.scss';
 
-function StudentUpdateForm({student}) {
+function StudentForm({student ={}, setStudent, title="Update", method="PUT"}) {
 
     const [firstname, setFirstname] = useState(student.firstname);
     const [lastname, setLastname] = useState(student.lastname);
@@ -20,6 +20,7 @@ function StudentUpdateForm({student}) {
     const [anyChanges, setAnyChanges] = useState(false);
     const [loading, setLoading] = useState(false);
     const [showSnackbar, setShowSnackbar] = useState(false);
+    const [successfullUpdate, setSuccessfullUpdate] = useState(false);
 
     const handleChange = (e)=>{
 
@@ -53,34 +54,41 @@ function StudentUpdateForm({student}) {
        setLoading(true);
        const url =`https://student-app-be-june.herokuapp.com/students/${student.id}`;
         const requestOptions = {
-            method: 'PUT',
+            method,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({firstname, lastname, company, city, skill, pic })
         };
             fetch(url, requestOptions)
             .then(response=>response.json())
             .then(data=>{
+                setStudent(data);
                 setAnyChanges(false);
+                setSuccessfullUpdate(true);
+                setShowSnackbar(true);
                 setLoading(false);
-
             }).catch(err=>{
                 setLoading(false);
+                setSuccessfullUpdate(false);
                 setShowSnackbar(true);
             });
     }
 
+    const action = method === 'PUT'? 'updating student' : 'adding student';
+  
+    const errorElement = <Alert severity="error">An error occurred while {action} — please try again later.</Alert>;
+    const successElement = <Alert>Student was updated successfully!</Alert>
 
     return (
-        <div className="studentUpdateForm">
+        <div className="studentForm">
             <Snackbar 
                 open={showSnackbar} 
                 anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
                 autoHideDuration={1500}
                 onClose={() => setShowSnackbar(false)}>
-                <Alert severity="error">An error occurred while updating — try again later.</Alert>
+                    {successfullUpdate? successElement : errorElement}
             </Snackbar>
-            <div className="studentUpdateForm__title">Update Student</div>
-            <div className="studentUpdateForm__inputs">
+            <div className="studentForm__title">{title} Student</div>
+            <div className="studentForm__inputs">
                 <TextField 
                     id="outlined-basic" 
                     label="First Name" 
@@ -130,19 +138,19 @@ function StudentUpdateForm({student}) {
                     onChange={(e)=>handleChange(e)}
                     />
             </div>
-            <div className="studentUpdateForm__submit">
+            <div className="studentForm__submit">
                 <Button 
                     variant="contained" 
                     size="large" 
                     disabled={!anyChanges}
                     onClick={handleSubmit}
-                    endIcon={loading && <AiOutlineReload className="studentUpdateForm__submitLoader-spinning"/>}
+                    endIcon={loading && <AiOutlineReload className="studentForm__submitLoader-spinning"/>}
                 >
-                    Update
+                    {title}
                 </Button>
             </div>
         </div>
     );
 }
 
-export default StudentUpdateForm;
+export default StudentForm;

@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {useParams, useLocation} from "react-router-dom";
 
 import StudentCard from '../components/studentCard/StudentCard';
-import StudentUpdateForm from '../components/studentUpdateForm/StudentUpdateForm';
+import StudentForm from '../components/studentForm/StudentForm';
 
 function StudentDetailPage(props) {
 
@@ -12,9 +12,10 @@ function StudentDetailPage(props) {
 
 
     useEffect(() => {
-        if(location.state?.student){
-            setStudent(location.state?.student  )
-        } else {
+        // if(location.state?.student){
+        //     setStudent(location.state?.student  )
+        //     // location.state.student = null;
+        // } else {
             
             const singleStudentURL =`https://student-app-be-june.herokuapp.com/students/${studentId}`; 
 
@@ -23,7 +24,7 @@ function StudentDetailPage(props) {
                 .then(data => {
                     setStudent(data);
                 })
-        }
+        // }
 
     }, []);
     
@@ -42,7 +43,7 @@ function StudentDetailPage(props) {
     return (
         <div className="studentDetailPage">
            {Object.keys(student).length > 0 && <StudentCard student={student} showDelete />}
-           {Object.keys(student).length > 0 && <StudentUpdateForm student={student}/>}
+           {Object.keys(student).length > 0 && <StudentForm student={student} setStudent={setStudent}/>}
         </div>
     );
 }

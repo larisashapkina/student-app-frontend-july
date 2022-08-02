@@ -7,7 +7,11 @@ function NavBar() {
     const [showNavbarItems, setShowNavbarItems] = useState(false);
     return (
         <div className="navbar">
-            <div className="navbar__logo">Student App</div>
+            <div className="navbar__logo">
+                <Link to="/">
+                    Student App
+                </Link>
+            </div>
             <div className="navbar__menuItems">
                 <li className="navbar__menuItem">
                     <Link to="/">Students</Link></li>
