@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-
+import { useNavigate } from "react-router-dom";
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Alert from '@mui/material/Alert';
@@ -10,6 +10,7 @@ import {AiOutlineReload } from 'react-icons/ai';
 import './StudentForm.scss';
 
 function StudentForm({student ={}, setStudent, title="Update", method="PUT"}) {
+    let navigate = useNavigate();
 
     const [firstname, setFirstname] = useState(student.firstname);
     const [lastname, setLastname] = useState(student.lastname);
@@ -52,7 +53,11 @@ function StudentForm({student ={}, setStudent, title="Update", method="PUT"}) {
 
     const handleSubmit=()=>{
        setLoading(true);
-       const url =`https://student-app-be-june.herokuapp.com/students/${student.id}`;
+       let url =`https://student-app-be-june.herokuapp.com/students`;
+        if(method==='PUT'){
+            url +=`/${student.id}`
+        }
+        
         const requestOptions = {
             method,
             headers: { 'Content-Type': 'application/json' },
@@ -61,12 +66,21 @@ function StudentForm({student ={}, setStudent, title="Update", method="PUT"}) {
             fetch(url, requestOptions)
             .then(response=>response.json())
             .then(data=>{
-                setStudent(data);
-                setAnyChanges(false);
-                setSuccessfullUpdate(true);
-                setShowSnackbar(true);
-                setLoading(false);
-            }).catch(err=>{
+                if(method === 'POST'){
+                    navigate(`/students/${data.id}`, { 
+                        state: {
+                            fromCreateStudent: true,
+                            studentName: `${data.firstname} ${data.lastname}`
+                        }
+                    });
+                }else{
+                    setStudent(data);
+                    setAnyChanges(false);
+                    setSuccessfullUpdate(true);
+                    setShowSnackbar(true);
+                    setLoading(false);
+                }
+            }).catch(err=>{     
                 setLoading(false);
                 setSuccessfullUpdate(false);
                 setShowSnackbar(true);
