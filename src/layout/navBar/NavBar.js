@@ -7,6 +7,7 @@ function NavBar() {
     const [showNavbarItems, setShowNavbarItems] = useState(false);
     return (
         <div className="navbar">
+            <div className="navbar__links">
             <div className="navbar__logo">
                 <Link to="/">
                     Student App
@@ -21,6 +22,7 @@ function NavBar() {
                     <Link to="/contact">Contact</Link></li>
             </div>
             <div className="navbar__toggleIcon">=</div>
+            </div>
         </div>
     );
 }
