@@ -15,6 +15,7 @@ function StudentForm({student ={}, setStudent, title="Update", method="PUT"}) {
     const [firstname, setFirstname] = useState(student.firstname);
     const [lastname, setLastname] = useState(student.lastname);
     const [company, setCompany] = useState(student.company);
+    const [email, setEmail] = useState(student.email);
     const [city, setCity] = useState(student.city);
     const [skill, setSkill] = useState(student.skill);
     const [pic, setPic] = useState(student.pic);
@@ -35,6 +36,9 @@ function StudentForm({student ={}, setStudent, title="Update", method="PUT"}) {
                 break;
             case 'lastname':
                 setLastname(e.target.value);
+                break;
+            case'email':
+                setEmail(e.target.value);
                 break;
             case 'company':
                 setCompany(e.target.value);
@@ -61,7 +65,7 @@ function StudentForm({student ={}, setStudent, title="Update", method="PUT"}) {
         const requestOptions = {
             method,
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({firstname, lastname, company, city, skill, pic })
+            body: JSON.stringify({firstname, lastname, email, company, city, skill, pic })
         };
             fetch(url, requestOptions)
             .then(response=>response.json())
@@ -119,6 +123,14 @@ function StudentForm({student ={}, setStudent, title="Update", method="PUT"}) {
                     name='lastname'
                     onChange={(e)=>handleChange(e)}
                     />
+                <TextField 
+                    id="outlined-basic" 
+                    label="Email" 
+                    variant="outlined" 
+                    value={email}
+                    name='email'
+                    onChange={(e)=>handleChange(e)}
+                    />    
                 <TextField 
                     id="outlined-basic" 
                     label="Company" 
