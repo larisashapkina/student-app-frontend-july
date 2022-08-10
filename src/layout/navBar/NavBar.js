@@ -1,27 +1,76 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
+import { useNavigate } from "react-router-dom";
 import'./Navbar.scss';
-import { Link } from "react-router-dom";
 
 function NavBar() {
 
+    let navigate = useNavigate();
+
     const [showNavbarItems, setShowNavbarItems] = useState(false);
+
+    useEffect(() => {
+        if(showNavbarItems){
+            document.body.style.overflow = "hidden";
+        } else { 
+            document.body.style.overflow = "auto";
+        }
+    }, [showNavbarItems]);
+
+    const toggleMenuItems = () =>{
+        setShowNavbarItems(!showNavbarItems);
+    }
+
+    const handleNavigation = (e) => {
+        // close menu
+        setShowNavbarItems(false);
+        // navigate user to correct path
+        navigate(e.target.id);
+    }
+
     return (
         <div className="navbar">
+            <div 
+                className="navbar__overlay" 
+                style={{"display" :showNavbarItems ? "block" : "none"}}
+                onClick={() => setShowNavbarItems(false)}>
+            </div>
             <div className="navbar__links">
-            <div className="navbar__logo">
-                <Link to="/">
+            <div 
+                className="navbar__logo"
+                onClick={handleNavigation}
+                id="/"
+                >
                     Student App
-                </Link>
             </div>
-            <div className="navbar__menuItems">
-                <li className="navbar__menuItem">
-                    <Link to="/">Students</Link></li>
-                <li className="navbar__menuItem">
-                    <Link to="/about">About</Link></li>
-                <li className="navbar__menuItem">
-                    <Link to="/contact">Contact</Link></li>
+            <div className={showNavbarItems ? "navbar__menuItems-active" : "navbar__menuItems"}>
+                <li 
+                    className="navbar__menuItem" 
+                    onClick = {handleNavigation}
+                    id='/'
+                >
+                    Students
+                </li>
+                <li 
+                    className="navbar__menuItem" 
+                    onClick = {handleNavigation}
+                    id='/about'
+                >
+                    About
+                </li>
+                <li 
+                    className="navbar__menuItem" 
+                    onClick = {handleNavigation}
+                    id='/contact'
+                >
+                   Contact
+                </li>
             </div>
-            <div className="navbar__toggleIcon">=</div>
+            <div 
+                className="navbar__toggleIcon"
+                onClick ={toggleMenuItems}
+            >
+                    =
+            </div>
             </div>
         </div>
     );
