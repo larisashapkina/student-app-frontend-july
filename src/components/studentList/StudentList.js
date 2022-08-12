@@ -20,6 +20,7 @@ const StudentList = (props) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [loading, setLoading] = useState(false);
     const [showSnackbar, setShowSnackbar] = useState(false);
+    const [tagSearch, setTagSearch] = useState("");
     
     
     // functions
@@ -37,6 +38,11 @@ const StudentList = (props) => {
         fetch(url)
         .then(response => response.json())
         .then(data => {
+
+            for(let student of data){
+                student.tagArr = [];
+            }
+
             setStudents(data);
             setLoading(false);
         })
@@ -62,7 +68,20 @@ const StudentList = (props) => {
         });
     }
 
+    if(tagSearch){
+        filteredStudents =  filteredStudents.filter(student => {
+            for(let tag of student.tagArr){
+                let partialTag = tag.toLowerCase().slice(0, tagSearch.length)
 
+                if(partialTag === tagSearch.toLowerCase()){
+                    return true;
+                }
+            }
+
+            // return student.tagArr.includes(tagSearch.toLowerCase())
+        })
+
+    }
     // return or JSX
     return (
         <div className="studentList">
@@ -74,6 +93,8 @@ const StudentList = (props) => {
                 <Alert>{location?.state?.studentName} was successfully deleted.</Alert>
             </Snackbar>
           <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+          <SearchBar searchTerm={tagSearch} setSearchTerm={setTagSearch} placeholder="Search by tag"/>
+
            {filteredStudents.map((student) => {
             return (
                 <StudentCard student={student} key={student.id} />
